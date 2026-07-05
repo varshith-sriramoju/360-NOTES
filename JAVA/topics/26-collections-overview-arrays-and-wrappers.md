@@ -10,7 +10,7 @@ A collection framework provides a set of classes and interfaces to represent a g
 
 A collection framework means a set of classes and interfaces.
 
-![Collection diagram](images/collection-diagram.png)
+![Collection diagram](../images/collection-diagram.png)
 
 ### Collections class
 `Collections` is a class available in `java.util`.
@@ -154,4 +154,3 @@ Boolean obj4 = obj1 <= obj2;
 - `bin` for `.class` files
 
 Collections store only objects, not primitive values.
-

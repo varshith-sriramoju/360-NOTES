@@ -228,3 +228,215 @@ protected void finalize()
 4. Garbage collector calls `finalize()` automatically before an object is destroyed or removed from JVM memory.
 5. JVM creates objects inside heap area when JVM starts running and removes objects from heap area before JVM shutdown.
 
+## `wait()`
+
+- `wait()` is used to make the current thread wait until another thread calls `notify()` or `notifyAll()` on the same object.
+- `wait()` is available in Object class because every object in Java can act as a lock.
+
+```java
+public final void wait() throws InterruptedException
+```
+
+### Notes
+
+1. `wait()` must be called from a synchronized method or synchronized block.
+2. If we call `wait()` without getting the object lock, we get `IllegalMonitorStateException`.
+3. When a thread calls `wait()`, it releases the lock of that object.
+4. The waiting thread moves into the waiting state.
+5. The waiting thread comes out of waiting state when another thread calls `notify()` or `notifyAll()` on the same object.
+6. `wait()` throws `InterruptedException`, so we must handle it using `try-catch` or declare it using `throws`.
+
+```java
+class Shared
+{
+	public synchronized void methodOne()
+	{
+		try
+		{
+			wait();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+## `wait(long)`
+
+- `wait(long)` is used to make the current thread wait for the given amount of time or until another thread calls `notify()` or `notifyAll()`.
+
+```java
+public final void wait(long milliseconds) throws InterruptedException
+```
+
+### Notes
+
+1. The time is given in milliseconds.
+2. `wait(1000)` means the current thread waits up to 1 second.
+3. The thread can come out of waiting state before the given time if another thread calls `notify()` or `notifyAll()`.
+4. Like `wait()`, `wait(long)` must also be called from a synchronized method or synchronized block.
+
+```java
+class Shared
+{
+	public synchronized void methodOne()
+	{
+		try
+		{
+			wait(1000);
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+## `wait(long, int)`
+
+- `wait(long, int)` is used to make the current thread wait for the given milliseconds and nanoseconds or until another thread calls `notify()` or `notifyAll()`.
+
+```java
+public final void wait(long milliseconds, int nanoseconds) throws InterruptedException
+```
+
+### Notes
+
+1. The first argument represents milliseconds.
+2. The second argument represents nanoseconds.
+3. Nanoseconds must be in the range `0` to `999999`.
+4. If nanoseconds are outside this range, we get `IllegalArgumentException`.
+5. Like other `wait()` methods, this method must also be called from a synchronized method or synchronized block.
+
+```java
+class Shared
+{
+	public synchronized void methodOne()
+	{
+		try
+		{
+			wait(1000, 500);
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+## `notify()`
+
+- `notify()` is used to wake up one waiting thread that is waiting on the same object.
+
+```java
+public final void notify()
+```
+
+### Notes
+
+1. `notify()` must be called from a synchronized method or synchronized block.
+2. If we call `notify()` without getting the object lock, we get `IllegalMonitorStateException`.
+3. `notify()` wakes up only one waiting thread.
+4. If multiple threads are waiting on the same object, the JVM decides which thread should be notified.
+5. The notified thread does not execute immediately. It has to wait until the current thread releases the object lock.
+
+```java
+class Shared
+{
+	public synchronized void methodOne()
+	{
+		notify();
+	}
+}
+```
+
+## `notifyAll()`
+
+- `notifyAll()` is used to wake up all waiting threads that are waiting on the same object.
+
+```java
+public final void notifyAll()
+```
+
+### Notes
+
+1. `notifyAll()` must be called from a synchronized method or synchronized block.
+2. If we call `notifyAll()` without getting the object lock, we get `IllegalMonitorStateException`.
+3. `notifyAll()` wakes up all waiting threads on the same object.
+4. Even though all waiting threads are notified, only one thread can get the object lock at a time.
+5. Remaining notified threads wait until the lock becomes available.
+
+```java
+class Shared
+{
+	public synchronized void methodOne()
+	{
+		notifyAll();
+	}
+}
+```
+
+## Difference Between `notify()` and `notifyAll()`
+
+| Method | Description |
+|---|---|
+| `notify()` | Wakes up only one waiting thread. |
+| `notifyAll()` | Wakes up all waiting threads. |
+
+## Example
+
+```java
+class Shared
+{
+	public synchronized void waitMethod()
+	{
+		try
+		{
+			System.out.println("Thread is waiting");
+			wait();
+			System.out.println("Thread got notification");
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public synchronized void notifyMethod()
+	{
+		System.out.println("Thread is sending notification");
+		notify();
+	}
+}
+
+public class Test
+{
+	public static void main(String[] args)
+	{
+		Shared s = new Shared();
+
+		Thread t1 = new Thread()
+		{
+			public void run()
+			{
+				s.waitMethod();
+			}
+		};
+
+		Thread t2 = new Thread()
+		{
+			public void run()
+			{
+				s.notifyMethod();
+			}
+		};
+
+		t1.start();
+		t2.start();
+	}
+}
+```

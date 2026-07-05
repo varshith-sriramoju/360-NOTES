@@ -1,6 +1,6 @@
 ﻿## 2D Array
 
-![2D Arrays](./images/2d-arrays.png)
+![2D Arrays](../images/2d-arrays.png)
 
 ### Declaration
 
