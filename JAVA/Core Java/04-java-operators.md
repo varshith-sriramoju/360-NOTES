@@ -1,6 +1,6 @@
 ﻿## Operators
-![My project screenshot](./images/operators-part-1.png)
-![My project screenshot](./images/operators-part-2.png)
+![My project screenshot](../images/operators-part-1.png)
+![My project screenshot](../images/operators-part-2.png)
 
 **What is an operator?**
 
